@@ -20,7 +20,7 @@ https://cs-internship.github.io/CS-Queue-Meetings-Intro/
 
 ## Settings (in the page)
 
-- `Meeting Time` (time input): set the target time the countdown reaches (default `18:00`).
+- `Meeting Time` (time input): set the target time in Iran (`Asia/Tehran`) that the countdown reaches (default `18:00`). The displayed time and countdown are the same for viewers in every country.
 - `DVD Mode` (checkbox): enables a moving visual element for display screens.
 - `Interview Mode` (checkbox): Simplifies on-screen text for switching between interview and introduction sessions.
 

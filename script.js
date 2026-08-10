@@ -79,8 +79,51 @@ const convertENtoFA = (input) => {
 
 const timeInput = document.querySelector(".meeting-time-input");
 const meetingTime = document.querySelector(".meeting-time");
+const IRAN_TIME_ZONE = "Asia/Tehran";
+
+const iranTimeFormatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: IRAN_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+});
 
 let hour, minute;
+
+const getIranTimeParts = (date) => {
+    return Object.fromEntries(
+        iranTimeFormatter
+            .formatToParts(date)
+            .filter(({ type }) => type !== "literal")
+            .map(({ type, value }) => [type, Number(value)])
+    );
+};
+
+const getIranCountdownMilliseconds = (date, meetingHour, meetingMinute) => {
+    const iranNow = getIranTimeParts(date);
+    const now = Date.UTC(
+        iranNow.year,
+        iranNow.month - 1,
+        iranNow.day,
+        iranNow.hour,
+        iranNow.minute,
+        iranNow.second
+    );
+    const target = Date.UTC(
+        iranNow.year,
+        iranNow.month - 1,
+        iranNow.day,
+        Number(meetingHour),
+        Number(meetingMinute),
+        0
+    );
+
+    return target - now;
+};
 
 const updateTimeFromInput = () => {
     const timeValue = timeInput.value;
@@ -96,18 +139,14 @@ timeInput.addEventListener("input", () => {
 });
 
 const updateCountdown = () => {
-    const now = new Date();
-    const target = new Date();
-    target.setHours(hour, minute, 0, 0);
+    const diff = getIranCountdownMilliseconds(new Date(), hour, minute);
 
     const countdownEl = document.querySelector(".countdown");
 
-    if (now > target) {
+    if (diff < 0) {
         countdownEl.innerText = "🎉🎉🎉🎉🎉";
         return;
     }
-
-    const diff = target - now;
 
     const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
     const minutes = String(
